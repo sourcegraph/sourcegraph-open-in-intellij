@@ -1,4 +1,4 @@
-# open-in-intellij (Sourcegraph extension)
+# Open in Intellij Sourcegraph extension
 
 Adds a button at the top of files in both Sourcegraph app and code hosts like GitHub (when the Sourcegraph browser extension is installed) that will open the current file in Intellij.
 
