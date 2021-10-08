@@ -7,6 +7,7 @@ interface Settings {
 
 function getOpenUrl(textDocumentUri: URL): URL {
     const basePath = sourcegraph.configuration.get<Settings>().value['openInIntellij.basePath']
+    const useBuiltin = sourcegraph.configuration.get<Settings>().value['openInIntellij.basePath']
     const learnMorePath = new URL('/extensions/sourcegraph/open-in-intellij', sourcegraph.internal.sourcegraphURL.href)
         .href
     const userSettingsPath = new URL('/user/settings', sourcegraph.internal.sourcegraphURL.href).href
@@ -26,7 +27,7 @@ function getOpenUrl(textDocumentUri: URL): URL {
     const repoBaseName = rawRepoName.split('/').pop() ?? ''
     const relativePath = decodeURIComponent(textDocumentUri.hash.slice('#'.length))
     const absolutePath = path.join(basePath, repoBaseName, relativePath)
-    const openUrl = new URL('idea://open?file=' + absolutePath)
+    const openUrl = !useBuiltin ? new URL('idea://open?file=' + absolutePath) : new URL('http://localhost:63342/api/file' + absolutePath);
 
     if (sourcegraph.app.activeWindow?.activeViewComponent?.type === 'CodeEditor') {
         const selection = sourcegraph.app.activeWindow?.activeViewComponent?.selection
