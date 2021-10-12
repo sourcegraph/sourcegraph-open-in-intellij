@@ -3,11 +3,12 @@ import * as path from 'path'
 
 interface Settings {
     'openInIntellij.basePath'?: string
+    'openInIntellij.useBuiltin'?: boolean
 }
 
 function getOpenUrl(textDocumentUri: URL): URL {
     const basePath = sourcegraph.configuration.get<Settings>().value['openInIntellij.basePath']
-    const useBuiltin = sourcegraph.configuration.get<Settings>().value['openInIntellij.basePath']
+    const useBuiltin = sourcegraph.configuration.get<Settings>().value['openInIntellij.useBuiltin']
     const learnMorePath = new URL('/extensions/sourcegraph/open-in-intellij', sourcegraph.internal.sourcegraphURL.href)
         .href
     const userSettingsPath = new URL('/user/settings', sourcegraph.internal.sourcegraphURL.href).href
