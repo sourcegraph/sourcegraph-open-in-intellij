@@ -1,6 +1,6 @@
 # Open in Intellij Sourcegraph extension
 
-Adds a button at the top of files in both Sourcegraph app and code hosts like GitHub (when the Sourcegraph browser extension is installed) that will open the current file in Intellij.
+Adds a button to the Sourcegraph's extension panel and at the top of files in code hosts like GitHub (when the Sourcegraph browser extension is installed) that will open the current file in Intellij.
 
 <picture>
 <source srcset="https://user-images.githubusercontent.com/37420160/96809054-23450b80-13e8-11eb-8e76-a0556e3b41e6.png" media="(prefers-color-scheme: dark)" />
@@ -15,6 +15,8 @@ Please apply the following configurations in your `User Settings` on Sourcegraph
 - `openInIntellij.basePath`: [REQUIRED] The absolute path on your computer where your git repositories live. This extension requires all git repos to be already cloned under this path with their original names. `"/Users/yourusername/src"` is a valid absolute path, while `"~/src"` is not.
 
 - `openInIntellij.useBuiltin`: [OPTIONAL] Set to `true` if you are using this extension on Windows.
+
+- `openInIntellij.replacements`: [OPTIONAL] Set to an object that includes pairs of strings, where each key will be replaced by its value in the final url. The key can be a string or a RegExp, and the value must be a string. For example, using `"openInIntellij.replacements": {"(?<=Documents\/)(.*[\\\/])": "sourcegraph-$1"}` will add `sourcegraph-` in front of the string that matches the `(?<=Documents\/)(.*[\\\/])` RegExp pattern, while `"openInIntellij.replacements": {"sourcegraph-": ""}` will remove `sourcegraph-` from the final URL.
 
 ## Configuration for Windows users
 
