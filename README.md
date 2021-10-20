@@ -12,13 +12,15 @@ Adds a button to the Sourcegraph's extension panel and at the top of files in co
 
 Please apply the following configurations in your `User Settings` on Sourcegraph:
 
-- `openInIntellij.basePath`: [REQUIRED] The absolute path on your computer where your git repositories live. This extension requires all git repos to be already cloned under this path with their original names. `"/Users/yourusername/src"` is a valid absolute path, while `"~/src"` is not.
+- `openInIntellij.basePath`: [REQUIRED] The absolute path on your computer where your git repositories live. This extension requires all git repos to be already cloned under this path with their original names, which the final path can later be altered using the `openInIntellij.replacements` option.
+  - Note: `"/Users/yourusername/src"` is a valid absolute path, while `"~/src"` is not.
 
-- `openInIntellij.useBuiltin`: [OPTIONAL] Set to `true` if you are using this extension on Windows.
+- `openInIntellij.useBuiltin`: [OPTIONAL] Set to `true` if you would like to open files using the Intellij's built-in REST API, or if you are using this extension on Windows.
 
 - `openInIntellij.replacements`: [OPTIONAL] Set to an object that includes pairs of strings, where each key will be replaced by its value in the final url. The key can be a string or a RegExp, and the value must be a string. For example, using `"openInIntellij.replacements": {"(?<=Documents\/)(.*[\\\/])": "sourcegraph-$1"}` will add `sourcegraph-` in front of the string that matches the `(?<=Documents\/)(.*[\\\/])` RegExp pattern, while `"openInIntellij.replacements": {"sourcegraph-": ""}` will remove `sourcegraph-` from the final URL.
 
-- `openInIntellij.osPaths`: [OPTIONAL] Takes object. The extension uses the assigned path for the detected Operating System when available. If no platform is detected then we will keep using the basePath provided with `openInIntellij.basePath`. Currently support `"windows"`, `"mac"`, and `"linux"` as keys.
+- `openInIntellij.osPaths`: [OPTIONAL] Takes object. The extension uses the assigned path for the detected Operating System when available. If no platform is detected then we will keep using the basePath provided with `openInIntellij.basePath`. 
+  - Note: Currently support `"windows"`, `"mac"`, and `"linux"` as keys.
 
 ## Configuration for Windows users
 
@@ -69,7 +71,7 @@ Uses the assigned path for the detected Operating System when available:
     "sourcegraph/open-in-intellij": true,
   },
   "openInIntellij.osPaths": {
-    // useBuiltin will be set to true in windows
+    // useBuiltin will automatically be set to true for windows
     "windows": "/C:/Users/USERNAME/folder/",
     "mac": "/Users/USERNAME/folder/",
     "linux": "/home/USERNAME/folder/"
