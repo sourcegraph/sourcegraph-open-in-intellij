@@ -18,6 +18,8 @@ Please apply the following configurations in your `User Settings` on Sourcegraph
 
 - `openInIntellij.replacements`: [OPTIONAL] Set to an object that includes pairs of strings, where each key will be replaced by its value in the final url. The key can be a string or a RegExp, and the value must be a string. For example, using `"openInIntellij.replacements": {"(?<=Documents\/)(.*[\\\/])": "sourcegraph-$1"}` will add `sourcegraph-` in front of the string that matches the `(?<=Documents\/)(.*[\\\/])` RegExp pattern, while `"openInIntellij.replacements": {"sourcegraph-": ""}` will remove `sourcegraph-` from the final URL.
 
+- `openInIntellij.osPaths`: [OPTIONAL] Takes object. The extension uses the assigned path for the detected Operating System when available. If no platform is detected then we will keep using the basePath provided with `openInIntellij.basePath`. Currently support `"windows"`, `"mac"`, and `"linux"` as keys.
+
 ## Configuration for Windows users
 
 The `idea://` protocol handler that this extension is using to open files directly from a URL is currently not supported on Windows. As a workaround, Windows user can use the Intellij's built-in REST API to open files directly from a URL with extra configuration steps.
@@ -54,6 +56,26 @@ To open repository files in your user's IdeaProjects directory:
   },
   "openInIntellij.basePath": "/C:/Users/USERNAME/IdeaProjects/",
   "openInIntellij.useBuiltin": true,
+}
+```
+
+### Set basePath for multiple platforms
+
+Uses the assigned path for the detected Operating System when available:
+
+```json
+{
+  "extensions": {
+    "sourcegraph/open-in-intellij": true,
+  },
+  "openInIntellij.osPaths": {
+    // useBuiltin will be set to true in windows
+    "windows": "/C:/Users/USERNAME/folder/",
+    "mac": "/Users/USERNAME/folder/",
+    "linux": "/home/USERNAME/folder/"
+  },
+  // set basePath as fallback path when no operation system is detected
+  "openInIntellij.basePath": "/Users/USERNAME/Documents/"
 }
 ```
 
