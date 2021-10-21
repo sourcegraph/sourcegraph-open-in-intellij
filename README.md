@@ -3,23 +3,25 @@
 Adds a button to the Sourcegraph's extension panel and at the top of files in code hosts like GitHub (when the Sourcegraph browser extension is installed) that will open the current file in Intellij.
 
 <picture>
-<source srcset="https://user-images.githubusercontent.com/37420160/96809054-23450b80-13e8-11eb-8e76-a0556e3b41e6.png" media="(prefers-color-scheme: dark)" />
-<source srcset="https://user-images.githubusercontent.com/37420160/96809032-16281c80-13e8-11eb-9b24-3787300ee66f.png" media="(prefers-color-scheme: light)" />
-<img src="https://user-images.githubusercontent.com/37420160/96809032-16281c80-13e8-11eb-9b24-3787300ee66f.png" alt="Screenshot" />
+<source srcset="https://user-images.githubusercontent.com/37420160/96809054-23450b80-13e8-11eb-8e76-a0556e3b41e6.png" width="100%" media="(prefers-color-scheme: dark)" />
+<source srcset="https://user-images.githubusercontent.com/37420160/96809032-16281c80-13e8-11eb-9b24-3787300ee66f.png" width="100%" media="(prefers-color-scheme: light)" />
+<img src="https://user-images.githubusercontent.com/37420160/96809032-16281c80-13e8-11eb-9b24-3787300ee66f.png" width="100%" alt="Screenshot" />
 </picture>
 
 ## Configuration
 
-Please apply the following configurations in your `User Settings` on Sourcegraph:
+**This extension requires all git repos to be cloned and available on your local machine.**
 
-- `openInIntellij.basePath`: [REQUIRED] The absolute path on your computer where your git repositories live. This extension requires all git repos to be already cloned under this path with their original names, which the final path can later be altered using the `openInIntellij.replacements` option.
+Please add the following options in your Sourcegraph's User Settings to configure the extension:
+
+- `openInIntellij.basePath`: [REQUIRED] String. The absolute path on your computer where your git repositories live. The extension will try to open the file in a clone named by the last segment of the repository name in that folder. This extension requires all git repos to be already cloned under this path with their original names, which the final path can later be altered using the `openInIntellij.replacements` option.
   - Note: `"/Users/yourusername/src"` is a valid absolute path, while `"~/src"` is not.
 
-- `openInIntellij.useBuiltin`: [OPTIONAL] Set to `true` if you would like to open files using the Intellij's built-in REST API, or if you are using this extension on Windows.
+- `openInIntellij.useBuiltin`: [OPTIONAL] Boolean. Set option to `true` in your user settings if you would like to open files using the Intellij's built-in REST API, or if you are using this extension on Windows.
 
 - `openInIntellij.replacements`: [OPTIONAL] Set to an object that includes pairs of strings, where each key will be replaced by its value in the final url. The key can be a string or a RegExp, and the value must be a string. For example, using `"openInIntellij.replacements": {"(?<=Documents\/)(.*[\\\/])": "sourcegraph-$1"}` will add `sourcegraph-` in front of the string that matches the `(?<=Documents\/)(.*[\\\/])` RegExp pattern, while `"openInIntellij.replacements": {"sourcegraph-": ""}` will remove `sourcegraph-` from the final URL.
 
-- `openInIntellij.osPaths`: [OPTIONAL] Takes object. The extension uses the assigned path for the detected Operating System when available. If no platform is detected then we will keep using the basePath provided with `openInIntellij.basePath`. 
+- `openInIntellij.osPaths`: [OPTIONAL] Takes object. The extension uses the assigned path for the detected Operating System when available. If no platform is detected then we will keep using the basePath provided by `openInIntellij.basePath`. 
   - Note: Currently support `"windows"`, `"mac"`, and `"linux"` as keys.
 
 ## Configuration for Windows users
@@ -76,7 +78,7 @@ Uses the assigned path for the detected Operating System when available:
     "mac": "/Users/USERNAME/folder/",
     "linux": "/home/USERNAME/folder/"
   },
-  // set basePath as fallback path when no operation system is detected
+  // set basePath as fallback path when no operating system is detected
   "openInIntellij.basePath": "/Users/USERNAME/Documents/"
 }
 ```
