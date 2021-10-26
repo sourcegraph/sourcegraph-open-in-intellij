@@ -3,14 +3,31 @@ import * as path from 'path'
 
 interface Settings {
     'openInIntellij.basePath'?: string
+    'openInIntellij.useBuiltin'?: boolean
+    'openInIntellij.replacements'?: Record<string, string>
+    'openInIntellij.osPaths'?: Record<string, string>
 }
 
 function getOpenUrl(textDocumentUri: URL): URL {
-    const basePath = sourcegraph.configuration.get<Settings>().value['openInIntellij.basePath']
+    let basePath = sourcegraph.configuration.get<Settings>().value['openInIntellij.basePath']
+    let useBuiltin = sourcegraph.configuration.get<Settings>().value['openInIntellij.useBuiltin']
+    const osPaths: Record<string, string> = sourcegraph.configuration.get().value['openInIntellij.osPaths'] as Record<string, string>
+    const replacements = sourcegraph.configuration.get().value['openInIntellij.replacements'] as Record<string, string>
     const learnMorePath = new URL('/extensions/sourcegraph/open-in-intellij', sourcegraph.internal.sourcegraphURL.href)
         .href
     const userSettingsPath = new URL('/user/settings', sourcegraph.internal.sourcegraphURL.href).href
 
+    // check platform and use assigned path when available;
+    if(osPaths){
+        if (navigator.userAgent.includes('Win') && osPaths.windows) {
+            basePath = osPaths.windows;
+            useBuiltin = true;
+        } else if (navigator.userAgent.includes('Mac') && osPaths.mac) {
+            basePath = osPaths.mac;
+        } else if (navigator.userAgent.includes('Linux') && osPaths.linux) {
+            basePath = osPaths.linux;
+        }
+    }
     if (typeof basePath !== 'string') {
         throw new TypeError(
             `Add \`openInIntellij.basePath\` to your [user settings](${userSettingsPath}) to open files in the editor. [Learn more](${learnMorePath})`
@@ -26,20 +43,32 @@ function getOpenUrl(textDocumentUri: URL): URL {
     const repoBaseName = rawRepoName.split('/').pop() ?? ''
     const relativePath = decodeURIComponent(textDocumentUri.hash.slice('#'.length))
     const absolutePath = path.join(basePath, repoBaseName, relativePath)
-    const openUrl = new URL('idea://open?file=' + absolutePath)
+    // Open files with IntelliJ's built-in REST API (port 63342) if useBuiltin is enabled instead of the idea:// protocol handler
+    // ref: https://www.jetbrains.com/help/idea/php-built-in-web-server.html#configuring-built-in-web-server
+    let openUrl = !useBuiltin ? 'idea://open?file=' + absolutePath : 'http://localhost:63342/api/file' + absolutePath;
 
     if (sourcegraph.app.activeWindow?.activeViewComponent?.type === 'CodeEditor') {
         const selection = sourcegraph.app.activeWindow?.activeViewComponent?.selection
         if (selection) {
-            openUrl.searchParams.set('line', (selection.start.line + 1).toString())
+            openUrl += `:${selection.start.line + 1}`
 
             if (selection && selection.start.character !== 0) {
-                openUrl.searchParams.set('column', (selection.start.character + 1).toString())
+                openUrl += `:${selection.start.character + 1}`
             }
         }
     }
 
-    return openUrl
+    // Run replacements if available
+    if(replacements) {
+        for (const replacement in replacements) {
+            if (typeof replacement === 'string') {
+                const POST_REGEX = new RegExp(replacement);
+                openUrl = openUrl.replace(POST_REGEX, replacements[replacement])
+            }
+        }
+    }
+
+    return new URL(openUrl)
 }
 
 export function activate(context: sourcegraph.ExtensionContext): void {
