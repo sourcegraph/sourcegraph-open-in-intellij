@@ -43,6 +43,8 @@ function getOpenUrl(textDocumentUri: URL): URL {
     const repoBaseName = rawRepoName.split('/').pop() ?? ''
     const relativePath = decodeURIComponent(textDocumentUri.hash.slice('#'.length))
     const absolutePath = path.join(basePath, repoBaseName, relativePath)
+    // Open files with IntelliJ's built-in REST API (port 63342) if useBuiltin is enabled instead of the idea:// protocol handler
+    // ref: https://www.jetbrains.com/help/idea/php-built-in-web-server.html#configuring-built-in-web-server
     let openUrl = !useBuiltin ? 'idea://open?file=' + absolutePath : 'http://localhost:63342/api/file' + absolutePath;
 
     if (sourcegraph.app.activeWindow?.activeViewComponent?.type === 'CodeEditor') {
@@ -56,7 +58,7 @@ function getOpenUrl(textDocumentUri: URL): URL {
         }
     }
 
-    // Run replacements if any
+    // Run replacements if available
     if(replacements) {
         for (const replacement in replacements) {
             if (typeof replacement === 'string') {
